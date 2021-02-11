@@ -1,26 +1,39 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useState } from 'react';
 import './App.css';
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    const [state, setState] = useState(["a", "b", "c"]);
+    
+    function shuffleElements(where: string, what: string) {
+        let newState = [...state];
+        newState = newState.filter(_ => _ !== what)
+        const idx = newState.indexOf(where);
+        newState.splice(idx, 0, what);
+        setState(newState);
+    }
+
+    const elms = state.map(element => 
+        <div 
+            key={element} 
+            className="dnd" 
+            draggable="true"
+            onDragStart={event => event.dataTransfer.setData('text/plain', element)}
+            onDragOver={event => event.preventDefault()}
+            onDragEnter={event => event.preventDefault()}
+            onDrop={event => {
+                    const movedElementContent = event.dataTransfer.getData('text/plain')
+                    shuffleElements(element, movedElementContent)
+                }
+            }
+            >
+                {element}
+            </div>
+    );
+    return (
+        <div className="App">
+            {elms}
+        </div>
+    );
 }
 
 export default App;
